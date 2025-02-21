@@ -8,7 +8,7 @@ import io
 app = FastAPI()
 
 # Carga el modelo guardado localmente
-model = tf.keras.models.load_model("model.h5")
+model = tf.keras.models.load_model("model_vgg16.h5")
 
 def preprocess_image(image: Image.Image) -> np.ndarray:
     """
