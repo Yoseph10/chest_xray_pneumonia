@@ -31,6 +31,10 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
 
     return image_array
 
+@app.get("/")
+async def root():
+    return {"message": "Bienvenido a la API de Predicción de Neumonía"}
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
