@@ -1,30 +1,23 @@
 import streamlit as st
-import numpy as np
-import cv2
-from PIL import Image
-import requests
 import io
+import requests
+from PIL import Image
 
-API_URL = "http://127.0.0.1:8000/predict/"  # URL local de la API
+API_URL = "http://127.0.0.1:8000/predict"
 
-def process_image(image):
-    """Convierte la imagen en un formato adecuado, si es necesario"""
-    image = np.array(image)  # Convertir a formato NumPy
+def process_image(image: Image.Image) -> Image.Image:
+    """Convierte la imagen a escala de grises y la devuelve."""
+    return image.convert("L")  # Convertir a escala de grises
 
-    # Si la imagen tiene 3 canales (RGB), conviértela a escala de grises
-    if len(image.shape) == 3 and image.shape[2] == 3:
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
-    return image  # Retorna la imagen sin modificar si ya es grayscale
-
-
-
-def send_image_to_api(image):
-    """Envía la imagen a la API y recibe la predicción"""
+def send_image_to_api(image: Image.Image):
+    """Envía la imagen a la API y recibe la predicción."""
     img_bytes = io.BytesIO()
     image.save(img_bytes, format="PNG")
-    response = requests.post(API_URL, files={"file": img_bytes.getvalue()})
-    
+    img_bytes.seek(0)  # Asegurar lectura desde el inicio
+
+    files = {"file": ("image.png", img_bytes, "image/png")}
+    response = requests.post(API_URL, files=files)
+
     if response.status_code == 200:
         return response.json()
     else:
@@ -32,25 +25,34 @@ def send_image_to_api(image):
 
 def main():
     st.title("🩺 X-Ray Image Viewer")
-    st.write("Cargue una imagen de rayos X para visualizarla.")
-    
+    st.write("Cargue una imagen de rayos X para visualizarla y analizarla.")
+
     uploaded_file = st.file_uploader("Subir imagen de rayos X", type=["png", "jpg", "jpeg"])
-    
+
     if uploaded_file is not None:
+        # Mostrar imagen original
         image = Image.open(uploaded_file)
         st.image(image, caption="Imagen Original", use_column_width=True)
-        
-        # Procesar la imagen
+
+        # Procesar imagen en escala de grises
         gray_image = process_image(image)
         
-        # Mostrar la imagen en escala de grises
-        st.image(gray_image, caption="Imagen en Escala de Grises", use_column_width=True, channels="GRAY")
-        
+        # Convertir a formato adecuado para Streamlit
+        gray_rgb = gray_image.convert("RGB")  # Evita errores con `st.image()`
+        st.image(gray_rgb, caption="Imagen en Escala de Grises", use_column_width=True)
+
         st.success("✅ Imagen procesada correctamente")
+
+        # Botón de análisis
         if st.button("🔍 Analizar Imagen"):
             result = send_image_to_api(image)
-            st.write(f"🩺 **Diagnóstico:** {result['diagnóstico']}")
-            st.write(f"📊 **Confianza:** {result['confianza']}")
+            st.write(result)
+
+            if result["prediction"] == "Error":
+                st.error("❌ No se pudo analizar la imagen. Intente con otra imagen.")
+            else:
+                st.write(f"🩺 **Diagnóstico:** {result['prediction']}")
+                st.write(f"📊 **Confianza:** {result['confidence']:.6f}")
 
 if __name__ == "__main__":
     main()
