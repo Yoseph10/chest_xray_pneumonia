@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from PIL import Image
 import requests
+import io
 
 API_URL = "http://127.0.0.1:8000/predict/"  # URL local de la API
 
