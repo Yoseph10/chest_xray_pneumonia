@@ -1,6 +1,0 @@
-streamlit
-numpy
-opencv-python
-pillow
-cv2
-tensorflow
