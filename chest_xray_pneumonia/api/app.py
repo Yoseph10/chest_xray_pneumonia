@@ -12,38 +12,24 @@ model = tf.keras.models.load_model("model.h5")
 
 def preprocess_image(image: Image.Image) -> np.ndarray:
     """
-    Preprocesa la imagen: redimensiona a 150x150, normaliza y añade una dimensión extra.
-    Ajusta estos parámetros según cómo entrenaste tu modelo.
-    """
-    image = image.resize((150, 150))
-
-    return image
-
-def preprocess_image(image: Image.Image) -> np.ndarray:
-
-    """
     Preprocesa la imagen:
       - Convierte la imagen a RGB para asegurar que tenga 3 canales.
       - Redimensiona a 150x150.
       - Normaliza los valores a [0, 1].
       - Añade una dimensión extra para simular un batch.
     """
-    # Asegura que la imagen esté en formato RGB (3 canales)
-    image = image.convert("RGB")
 
-    # Define el tamaño objetivo; asegúrate de que coincida con IMG_SIZE usado en el entrenamiento
-    target_size = (150, 150)  # Ajusta este valor según corresponda
-
-    # Redimensiona la imagen
+    # Redimensiona la imagen al tamaño objetivo (150x150)
+    target_size = (150, 150)
     image = image.resize(target_size)
 
     # Convierte la imagen a un arreglo numpy y reescala los valores a [0, 1]
-    image = np.array(image) / 255.0
+    image_array = np.array(image) / 255.0
 
-    # Añade una dimensión extra para el batch (necesario para el modelo)
-    image = np.expand_dims(image, axis=0)
+    # Añade una dimensión extra para simular un batch
+    image_array = np.expand_dims(image_array, axis=0)
 
-    return image
+    return image_array
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
