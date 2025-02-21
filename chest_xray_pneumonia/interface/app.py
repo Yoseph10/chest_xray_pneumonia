@@ -8,10 +8,14 @@ import io
 API_URL = "http://127.0.0.1:8000/predict/"  # URL local de la API
 
 def process_image(image):
-    # Convertir a escala de grises
-    image = np.array(image)
-    gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    return gray_image
+    """Convierte la imagen en un formato adecuado, si es necesario"""
+    image = np.array(image)  # Convertir a formato NumPy
+
+    # Si la imagen tiene 3 canales (RGB), conviértela a escala de grises
+    if len(image.shape) == 3 and image.shape[2] == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    return image  # Retorna la imagen sin modificar si ya es grayscale
 
 
 
@@ -43,6 +47,10 @@ def main():
         st.image(gray_image, caption="Imagen en Escala de Grises", use_column_width=True, channels="GRAY")
         
         st.success("✅ Imagen procesada correctamente")
+        if st.button("🔍 Analizar Imagen"):
+            result = send_image_to_api(image)
+            st.write(f"🩺 **Diagnóstico:** {result['diagnóstico']}")
+            st.write(f"📊 **Confianza:** {result['confianza']}")
 
 if __name__ == "__main__":
     main()
