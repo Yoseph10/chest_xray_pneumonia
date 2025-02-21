@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 streamlit
 numpy
 opencv-python
 pillow
 cv2
 tensorflow
->>>>>>> 3e83a70 (Añadiendo dependencias de la app)
