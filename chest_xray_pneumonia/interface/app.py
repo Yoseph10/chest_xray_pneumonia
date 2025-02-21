@@ -25,9 +25,48 @@ def send_image_to_api(image: Image.Image):
 
 def main():
     st.title("🩺 X-Ray Image Viewer")
+    st.markdown(
+        """
+        🔬 **Bienvenido a nuestra herramienta de análisis de imágenes de rayos X.**  
+        📌 **Objetivo**: Esta aplicación permite cargar imágenes de rayos X del tórax para ayudar en la **detección automática de neumonía** utilizando inteligencia artificial.  
+        📸 **Instrucciones**:  
+        1️⃣ Sube una imagen en formato **PNG, JPG o JPEG**.  
+        2️⃣ La aplicación procesará la imagen y la convertirá a escala de grises.  
+        3️⃣ Se enviará a un modelo de aprendizaje profundo para su análisis.  
+        4️⃣ Recibirás un diagnóstico con una medida de confianza sobre la posible presencia de neumonía.  
+
+        ✅ *Esta herramienta es solo de referencia y no reemplaza un diagnóstico médico profesional.*  
+        """,
+        unsafe_allow_html=True
+    )
     st.write("Cargue una imagen de rayos X para visualizarla y analizarla.")
 
     uploaded_file = st.file_uploader("Subir imagen de rayos X", type=["png", "jpg", "jpeg"])
+    
+    # Pie de página con información de autores y copyright
+    st.markdown(
+        """
+        <style>
+            .footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background-color: #f1f1f1;
+                text-align: center;
+                padding: 10px;
+                font-size: 14px;
+                color: #333;
+            }
+        </style>
+        <div class="footer">
+            🎓 Le Wagon - Batch 1767 🚀<br>
+            &copy; 2025 Todos los derechos reservados.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
     if uploaded_file is not None:
         # Mostrar imagen original
@@ -53,6 +92,7 @@ def main():
             else:
                 st.write(f"🩺 **Diagnóstico:** {result['prediction']}")
                 st.write(f"📊 **Confianza:** {result['confidence']:.6f}")
+                
 
 if __name__ == "__main__":
     main()

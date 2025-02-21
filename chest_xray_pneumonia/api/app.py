@@ -8,7 +8,11 @@ import io
 app = FastAPI()
 
 # Carga el modelo guardado localmente
-model = tf.keras.models.load_model("model_vgg16.h5")
+#model = tf.keras.models.load_model("model_vgg16.h5")
+model = tf.keras.models.load_model("model_combined.h5")
+
+from PIL import Image
+import numpy as np
 
 def preprocess_image(image: Image.Image) -> np.ndarray:
     """
@@ -19,17 +23,21 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
       - Añade una dimensión extra para simular un batch.
     """
 
+    # Asegurar que la imagen tiene 3 canales (RGB)
+    image = image.convert("RGB")
+
     # Redimensiona la imagen al tamaño objetivo (150x150)
     target_size = (150, 150)
     image = image.resize(target_size)
 
     # Convierte la imagen a un arreglo numpy y reescala los valores a [0, 1]
-    image_array = np.array(image) / 255.0
+    image_array = np.array(image) / 255.0  # (150, 150, 3)
 
-    # Añade una dimensión extra para simular un batch
+    # Añade una dimensión extra para simular un batch (1, 150, 150, 3)
     image_array = np.expand_dims(image_array, axis=0)
 
-    return image_array
+    return image_array  # Salida: (1, 150, 150, 3)
+
 
 @app.get("/")
 async def root():
@@ -37,18 +45,28 @@ async def root():
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    contents = await file.read()
     try:
-        # Se abre la imagen sin forzar la conversión, ya que se hace en preprocess_image
+        contents = await file.read()
         image = Image.open(io.BytesIO(contents))
     except Exception:
         return JSONResponse(status_code=400, content={"error": "Imagen inválida"})
 
-    processed = preprocess_image(image)
-    prediction = model.predict(processed)
+    try:
+        processed = preprocess_image(image)
+        prediction = model.predict(processed)  # Devolución esperada: array numpy
 
-    # Se asume clasificación binaria: si el valor es mayor o igual a 0.5 se considera "pneumonia"
-    confidence = float(prediction[0][0])
-    result = "pneumonia" if confidence >= 0.5 else "normal"
+        # Verifica la forma de salida
+        if prediction.shape != (1, 1):  # Asegurar que sea binario (pneumonia o normal)
+            return JSONResponse(status_code=500, content={"error": "Salida inesperada del modelo"})
 
-    return {"prediction": result, "confidence": confidence}
+        confidence = float(prediction[0][0])  # Convertir a float estándar
+        result = "pneumonia" if confidence >= 0.3 else "normal"
+
+        return {"prediction": result, "confidence": confidence}
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": f"Error en la predicción: {str(e)}"})
+
+
+
+
