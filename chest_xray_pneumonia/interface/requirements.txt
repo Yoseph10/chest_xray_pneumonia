@@ -2,7 +2,6 @@ streamlit
 numpy
 opencv-python
 pillow
-cv2
+#cv2  cv2 no se instala directamente con pip install cv2
 tensorflow
 requests
-
