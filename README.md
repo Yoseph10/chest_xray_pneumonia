@@ -6,6 +6,7 @@ Este proyecto utiliza redes neuronales convolucionales (CNN) y Transfer Learning
 
 - `data/`: Datos crudos y procesados.
 - `models/`: Modelos entrenados.
+- `history/`:historiales de entrenamiento
 - `notebooks/`: Análisis exploratorio y pruebas.
 - `reports/`: Visualizaciones y métricas.
 - `src/`: Código fuente.
