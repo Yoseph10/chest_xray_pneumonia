@@ -1,12 +1,12 @@
 # Usa una imagen base de Python
-FROM python:3.8-slim
+FROM python:3.10.6-slim
 
 # Establece el directorio de trabajo
 WORKDIR /app
 
 # Copia el archivo de requerimientos e instala las dependencias
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install --default-timeout=100 -r requirements.txt
 
 # Copia el resto de la aplicación (app.py, .gitignore, etc.) excepto los archivos ignorados
 COPY . .
