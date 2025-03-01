@@ -2,6 +2,8 @@ import streamlit as st
 import io
 import requests
 from PIL import Image
+import base64
+
 
 API_URL = "http://127.0.0.1:8000/predict"
 
@@ -27,22 +29,22 @@ def main():
     st.title("🩺 X-Ray Image Viewer")
     st.markdown(
         """
-        🔬 **Bienvenido a nuestra herramienta de análisis de imágenes de rayos X.**  
-        📌 **Objetivo**: Esta aplicación permite cargar imágenes de rayos X del tórax para ayudar en la **detección automática de neumonía** utilizando inteligencia artificial.  
-        📸 **Instrucciones**:  
-        1️⃣ Sube una imagen en formato **PNG, JPG o JPEG**.  
-        2️⃣ La aplicación procesará la imagen y la convertirá a escala de grises.  
-        3️⃣ Se enviará a un modelo de aprendizaje profundo para su análisis.  
-        4️⃣ Recibirás un diagnóstico con una medida de confianza sobre la posible presencia de neumonía.  
+        🔬 **Bienvenido a nuestra herramienta de análisis de imágenes de rayos X.**
+        📌 **Objetivo**: Esta aplicación permite cargar imágenes de rayos X del tórax para ayudar en la **detección automática de neumonía** utilizando inteligencia artificial.
+        📸 **Instrucciones**:
+        1️⃣ Sube una imagen en formato **PNG, JPG o JPEG**.
+        2️⃣ La aplicación procesará la imagen y la convertirá a escala de grises.
+        3️⃣ Se enviará a un modelo de aprendizaje profundo para su análisis.
+        4️⃣ Recibirás un diagnóstico con una medida de confianza sobre la posible presencia de neumonía.
 
-        ✅ *Esta herramienta es solo de referencia y no reemplaza un diagnóstico médico profesional.*  
+        ✅ *Esta herramienta es solo de referencia y no reemplaza un diagnóstico médico profesional.*
         """,
         unsafe_allow_html=True
     )
     st.write("Cargue una imagen de rayos X para visualizarla y analizarla.")
 
     uploaded_file = st.file_uploader("Subir imagen de rayos X", type=["png", "jpg", "jpeg"])
-    
+
     # Pie de página con información de autores y copyright
     st.markdown(
         """
@@ -75,7 +77,7 @@ def main():
 
         # Procesar imagen en escala de grises
         gray_image = process_image(image)
-        
+
         # Convertir a formato adecuado para Streamlit
         gray_rgb = gray_image.convert("RGB")  # Evita errores con `st.image()`
         st.image(gray_rgb, caption="Imagen en Escala de Grises", use_column_width=True)
@@ -92,7 +94,14 @@ def main():
             else:
                 st.write(f"🩺 **Diagnóstico:** {result['prediction']}")
                 st.write(f"📊 **Confianza:** {result['confidence']:.6f}")
-                
+
+                # Mostrar imagen de Grad-CAM si la predicción es neumonía
+                if result["prediction"] == "pneumonia" and "gradcam" in result:
+                    st.write("📷 **Grad-CAM: Visualización de la región afectada**")
+                    gradcam_data = base64.b64decode(result["gradcam"])
+                    gradcam_img = Image.open(io.BytesIO(gradcam_data))
+                    st.image(gradcam_img, caption="Grad-CAM Heatmap", use_column_width=True)
+
 
 if __name__ == "__main__":
     main()
