@@ -69,7 +69,11 @@ def send_image_to_api(image: Image.Image):
     else:
         return {"diagnóstico": "Error", "confianza": "N/A"}
 
-def main():
+
+# Creamos dos pestañas: "Visor de Imágenes" y "Detalles Técnicos"
+tab1, tab2 = st.tabs(["Visor de Imágenes", "Detalles Técnicos"])
+
+with tab1:
 
     # Inyectar CSS para mejorar la estética, incluyendo un fondo "AliceBlue"
     st.markdown(
@@ -171,6 +175,36 @@ def main():
                     gradcam_img = Image.open(io.BytesIO(gradcam_data))
                     st.image(gradcam_img, caption="Grad-CAM Heatmap", use_container_width=True)
 
+with tab2:
+    st.title("Detalles Técnicos del Modelo")
+    st.markdown(
+        """
+        ### Origen de los Datos
+        - **Fuente:** Los datos provienen de [inserte la fuente aquí], que contiene imágenes de rayos X de pacientes con y sin neumonía.
+        - **Preprocesamiento:** Se realizó un preprocesamiento para estandarizar las imágenes, redimensionándolas a 256x256, normalizando y convirtiéndolas a escala de grises.
+
+        ### Arquitectura del Modelo
+        - **Modelo Base:** Se utilizó un modelo VGG16 modificado, entrenado previamente en ImageNet.
+        - **Transfer Learning:** Se congelaron las capas del modelo base y se añadieron capas personalizadas (convolucionales, de pooling, BatchNormalization, dropout y capas densas) para la detección de neumonía.
+        - **Última Capa Convolucional Utilizada para Grad-CAM:** `block5_conv3`.
+
+        ### Entrenamiento
+        - **Algoritmo:** Se entrenó el modelo para clasificación binaria (neumonía vs. normal).
+        - **Optimización:** Se usó el optimizador Adam con un learning rate de 5e-5.
+        - **Callbacks:** EarlyStopping, ReduceLROnPlateau y ModelCheckpoint fueron utilizados para mejorar el entrenamiento y evitar sobreajuste.
+        - **Ajuste de Severidad:** Se implementó un método basado en Grad-CAM para estimar la severidad de la neumonía (leve, moderada o severa) en función del porcentaje de activación.
+
+        ### Comentarios Adicionales
+        - **Explicabilidad:** La integración de Grad-CAM permite visualizar las áreas afectadas en la imagen, facilitando la interpretación del modelo.
+        - **Integración en la App:** La API retorna la predicción, la confianza, la imagen de Grad-CAM y el nivel de severidad, lo que se muestra en la aplicación.
+
+        ---
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Esta sección muestra los detalles técnicos de la construcción del modelo y su entrenamiento.")
+
 
     # Pie de página
     st.markdown(
@@ -181,7 +215,3 @@ def main():
         """,
         unsafe_allow_html=True
     )
-
-
-if __name__ == "__main__":
-    main()
