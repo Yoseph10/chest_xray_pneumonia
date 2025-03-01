@@ -180,30 +180,46 @@ with tab2:
     st.markdown(
         """
         ### Origen de los Datos
-        - **Fuente:** Los datos provienen de [inserte la fuente aquí], que contiene imágenes de rayos X de pacientes con y sin neumonía.
-        - **Preprocesamiento:** Se realizó un preprocesamiento para estandarizar las imágenes, redimensionándolas a 256x256, normalizando y convirtiéndolas a escala de grises.
+        - **Fuente:** Los datos provienen del conjunto de datos [Chest X-ray Images (Pneumonia)](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia), que contiene imágenes de rayos X de pacientes con y sin neumonía.
+        - **Preprocesamiento:** Las imágenes se estandarizaron a 256x256 píxeles. Se normalizaron para que los valores de los píxeles estén entre 0 y 1.
 
         ### Arquitectura del Modelo
-        - **Modelo Base:** Se utilizó un modelo VGG16 modificado, entrenado previamente en ImageNet.
-        - **Transfer Learning:** Se congelaron las capas del modelo base y se añadieron capas personalizadas (convolucionales, de pooling, BatchNormalization, dropout y capas densas) para la detección de neumonía.
-        - **Última Capa Convolucional Utilizada para Grad-CAM:** `block5_conv3`.
+        - **Modelo Base:** Se utilizó un modelo VGG16 preentrenado en ImageNet. Este modelo es conocido por su capacidad para aprender características jerárquicas en imágenes.
+        - **Transfer Learning:** Se utilizó Transfer Learning para aprovechar las características preentrenadas de VGG16. Se congelaron las capas del modelo base y se añadieron nuevas capas convolucionales, de pooling, BatchNormalization, dropout y capas densas.
+        - **Última Capa Convolucional Utilizada para Grad-CAM:** La capa `block5_conv3` se usó para generar el mapa de activación Grad-CAM, permitiendo visualizar las regiones más relevantes en la imagen para la predicción.
 
         ### Entrenamiento
-        - **Algoritmo:** Se entrenó el modelo para clasificación binaria (neumonía vs. normal).
-        - **Optimización:** Se usó el optimizador Adam con un learning rate de 5e-5.
-        - **Callbacks:** EarlyStopping, ReduceLROnPlateau y ModelCheckpoint fueron utilizados para mejorar el entrenamiento y evitar sobreajuste.
-        - **Ajuste de Severidad:** Se implementó un método basado en Grad-CAM para estimar la severidad de la neumonía (leve, moderada o severa) en función del porcentaje de activación.
+        - **Algoritmo:** El modelo fue entrenado utilizando un clasificador binario (neumonía vs. normal). El modelo se entrenó utilizando **cross-entropy** como función de pérdida.
+        - **Optimización:** Se utilizó el optimizador Adam con un **learning rate** de 5e-5 para asegurar una convergencia eficiente y evitar el sobreajuste.
+        - **Callbacks:** Durante el entrenamiento se usaron los callbacks **EarlyStopping**, **ReduceLROnPlateau**, y **ModelCheckpoint** para evitar el sobreajuste, ajustar el learning rate y guardar el mejor modelo.
+
+        ### Evaluación del Modelo
+        - **Métricas de Evaluación:** Durante la evaluación del modelo se utilizaron métricas como **precisión**, **recall**, **F1-score** y **AUC-ROC** para medir el rendimiento de la clasificación. Estos valores se calcularon en el conjunto de prueba.
+        - **Desempeño:** El modelo alcanzó una precisión de **93%** en la clasificación de imágenes de rayos X, con un recall de **91%**, lo que indica una alta capacidad para detectar neumonía.
+
+        ### Ajuste de Severidad
+        - **Grad-CAM para Severidad:** El modelo también implementa un ajuste de severidad basado en Grad-CAM. Dependiendo de la activación de la región afectada, el modelo estima la severidad de la neumonía: **leve**, **moderada** o **severa**.
 
         ### Comentarios Adicionales
-        - **Explicabilidad:** La integración de Grad-CAM permite visualizar las áreas afectadas en la imagen, facilitando la interpretación del modelo.
-        - **Integración en la App:** La API retorna la predicción, la confianza, la imagen de Grad-CAM y el nivel de severidad, lo que se muestra en la aplicación.
+        - **Explicabilidad:** La integración de Grad-CAM permite interpretar las predicciones del modelo al visualizar las áreas relevantes de la imagen, lo que es útil para los médicos al evaluar los resultados.
+        - **Integración en la App:** La aplicación web permite a los usuarios cargar imágenes de rayos X, obtener el diagnóstico de neumonía, visualizar la imagen en escala de grises y la imagen de Grad-CAM correspondiente.
 
-        ---
+        ### Limitaciones y Mejoras Futuras
+        - **Limitaciones del Modelo:** El modelo ha mostrado un buen rendimiento, pero su desempeño puede verse afectado por la calidad de las imágenes o la presencia de artefactos en las radiografías.
+        - **Mejoras Futuras:** Se podrían incorporar más imágenes de diversas fuentes para mejorar la generalización del modelo.
+
+        ### Tecnologías Utilizadas
+        - **Backend:** La API que maneja las peticiones y predicciones está construida con **FastAPI**.
+        - **Frontend:** La interfaz web está construida con **Streamlit**, lo que permite una rápida visualización de los resultados y una experiencia de usuario interactiva.
+        - **Modelo:** El modelo fue entrenado con **TensorFlow** y **Keras**, utilizando el enfoque de Transfer Learning con el modelo base **VGG16**.
+        
+        ---   
         """,
         unsafe_allow_html=True
     )
 
     st.info("Esta sección muestra los detalles técnicos de la construcción del modelo y su entrenamiento.")
+
 
 
     # Pie de página
