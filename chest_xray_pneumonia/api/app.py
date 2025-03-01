@@ -83,6 +83,21 @@ def encode_image_to_base64(image_array):
     encoded = base64.b64encode(img_bytes).decode('utf-8')
     return encoded
 
+def calcular_severidad(gradcam):
+    """Determina la severidad de la neumonía en base al Grad-CAM"""
+    gradcam_gray = cv2.cvtColor(gradcam, cv2.COLOR_RGB2GRAY)  # Convertir a escala de grises
+    umbral = 100  # Ajustar según intensidad del Grad-CAM
+    area_activada = np.sum(gradcam_gray > umbral)  # Contar píxeles activados
+    total_pixeles = gradcam_gray.size
+    porcentaje_activacion = (area_activada / total_pixeles) * 100
+
+    if porcentaje_activacion < 30:
+        return "leve"
+    elif porcentaje_activacion < 60:
+        return "moderada"
+    else:
+        return "severa"
+
 @app.get("/")
 async def root():
     return {"message": "Bienvenido a la API de Predicción de Neumonía"}
@@ -113,9 +128,16 @@ async def predict(file: UploadFile = File(...)):
             target_size = (256, 256)
             resized_original = original_image.convert("RGB").resize(target_size)
             superimposed_img = superimpose_heatmap_on_image(heatmap, resized_original)
+
+            # Determinar la severidad basándose en el Grad-CAM
+            severity = calcular_severidad(superimposed_img)
+
             # Codificar la imagen resultante a base64 para incluirla en la respuesta JSON
             encoded_img = encode_image_to_base64(superimposed_img)
             response_data["gradcam"] = encoded_img
+
+            response_data["severity"] = severity  # Nueva clave con la severidad
+
 
         return response_data
 
