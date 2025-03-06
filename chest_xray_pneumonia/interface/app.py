@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 # Configuración de la clave API de OpenAI
 try:
-    openai.api_key = ""
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 except KeyError:
     st.error("⚠️ Error: No se encontró la clave de OpenAI en `st.secrets`. Configúrala en `.streamlit/secrets.toml`.")
 
