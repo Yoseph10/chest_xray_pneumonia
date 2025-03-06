@@ -4,8 +4,16 @@ import requests
 from PIL import Image
 import base64
 import warnings
+import openai
 
 warnings.filterwarnings("ignore")
+
+# Configuración de la clave API de OpenAI
+try:
+    openai.api_key = ""
+except KeyError:
+    st.error("⚠️ Error: No se encontró la clave de OpenAI en `st.secrets`. Configúrala en `.streamlit/secrets.toml`.")
+
 
 API_URL = "https://api-pneumonia-816459197660.us-central1.run.app/predict"
 
@@ -20,6 +28,7 @@ st.set_page_config(
 if "uploaded_image" not in st.session_state:
     st.session_state.uploaded_image = None
     st.session_state.result = None
+    st.session_state.gpt_response = None
 
 # Estilos CSS personalizados sin modo oscuro
 st.markdown("""
@@ -70,6 +79,7 @@ with st.sidebar:
         if archivo_subido != st.session_state.uploaded_image:
             st.session_state.uploaded_image = archivo_subido
             st.session_state.result = None  # Borrar resultado anterior
+            st.session_state.gpt_response = None
 
 
 # Pestañas para Visualización y Detalles Técnicos
@@ -139,6 +149,40 @@ with pestana1:
                         gradcam_data = base64.b64decode(resultado["gradcam"])
                         gradcam_img = Image.open(io.BytesIO(gradcam_data))
                         st.image(gradcam_img, caption="Mapa de Calor Grad-CAM", use_container_width=True)
+
+                            # Botón para generar diagnóstico de IA
+                if st.button("🧠 Obtener diagnóstico de IA"):
+                    with st.spinner("💬 Consultando IA..."):
+                        try:
+                            response = openai.ChatCompletion.create(
+                                model="gpt-4",
+                                messages=[
+                                    {"role": "system", "content": "Eres un médico neumólogo experto en análisis de imágenes de rayos X. "
+                                                                "Tienes acceso a un sistema de IA que analiza imágenes y proporciona predicciones sobre enfermedades pulmonares."},
+                                    {"role": "user", "content": f"El sistema de IA ha detectado neumonía con una confianza del {confianza*100:.2f}%. "
+                                                                f"La severidad ha sido clasificada como {resultado['severity']}. "
+                                                                f"Se ha identificado afectación en las siguientes regiones pulmonares basadas en la imagen de Grad-CAM: "
+                                                                f"{diagnostico}. Basándote en esta información, proporciona un diagnóstico detallado de no más de 300 palabras"
+                                                                f"y una posible sugerencia médica. No menciones que eres una IA, supongamos que eres un médico."}
+                                ],
+                                max_tokens=350,
+                                temperature=0.7,
+                                top_p=1.0
+                            )
+
+                            st.session_state.gpt_response = response["choices"][0]["message"]["content"].strip()
+                            # Aplicar justificación con HTML y CSS
+                            st.markdown(
+                                f"""
+                                <div style="text-align: justify; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
+                                    {st.session_state.gpt_response}
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+        )
+
+                        except Exception as e:
+                            st.session_state.gpt_response = f"❌ Error al generar diagnóstico: {str(e)}"
 
 
 with pestana2:
