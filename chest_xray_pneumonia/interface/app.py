@@ -7,7 +7,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-API_URL = "http://127.0.0.1:8000/predict"
+API_URL = "https://api-pneumonia-816459197660.us-central1.run.app/predict"
 
 st.set_page_config(
     page_title="Analizador de Rayos X",
@@ -82,9 +82,9 @@ with pestana1:
     st.markdown("""
     <div style="background-color: #e6f7ff; padding: 1rem; border-radius: 8px;">
         <h2 style="color: #0077b6;">📢 Importante: Este es un Análisis Preliminar</h2>
-        <p>⚠️ <strong>Este análisis basado en inteligencia artificial es una herramienta de apoyo.</strong> 
+        <p>⚠️ <strong>Este análisis basado en inteligencia artificial es una herramienta de apoyo.</strong>
         No sustituye la evaluación de un profesional de la salud.</p>
-        <p>👨‍⚕️ Si la imagen sugiere una posible neumonía u otra condición, 
+        <p>👨‍⚕️ Si la imagen sugiere una posible neumonía u otra condición,
         <strong>se recomienda consultar con un médico especializado</strong> para una evaluación y diagnóstico definitivos.</p>
     </div>
     """, unsafe_allow_html=True)
@@ -112,10 +112,20 @@ with pestana1:
             st.error(f"❌ Error en la API: {resultado.get('message', 'Respuesta inválida')}")
         else:
             diagnostico = resultado.get("prediction", "Desconocido")
-            confianza = resultado.get("confidence", 0.0)
+            prob_neumonia = resultado.get("confidence", 0.0)
+
+            if diagnostico == "pneumonia":
+                etiqueta = "Tiene Neumonía"
+                confianza = prob_neumonia  # Se mantiene igual
+            elif diagnostico == "normal":
+                etiqueta = "No tiene Neumonía"
+                confianza = 1 - prob_neumonia  # Se invierte la probabilidad
+            else:
+                etiqueta = "Diagnóstico desconocido"
+                confianza = "N/A"
 
             col1, col2 = st.columns(2)
-            col1.metric("🩺 Diagnóstico", diagnostico)
+            col1.metric("🩺 Diagnóstico", etiqueta)
             col2.metric("📊 Confianza", f"{confianza * 100:.2f}%")
 
             st.progress(confianza)
@@ -170,6 +180,6 @@ with pestana2:
 # Pie de Página
 st.markdown("""
 ---
-🎓 Le Wagon - Batch 1767 🚀  
+🎓 Le Wagon - Batch 1767 🚀
 &copy; 2025 Todos los derechos reservados.
 """, unsafe_allow_html=True)
