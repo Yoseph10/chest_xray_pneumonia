@@ -17,7 +17,7 @@ warnings.filterwarnings("ignore")
 
 # Configuración de la clave API de OpenAI
 try:
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = openai.Client(api_key=st.secrets["OPENAI_API_KEY"])
 except KeyError:
     st.error("⚠️ Error: No se encontró la clave de OpenAI en `st.secrets`. Configúrala en `.streamlit/secrets.toml`.")
 
@@ -155,7 +155,7 @@ with pestana1:
                 if st.button("🧠 Obtener diagnóstico de IA"):
                     with st.spinner("💬 Consultando IA..."):
                         try:
-                            response = openai.ChatCompletion.create(
+                            response = client.chat.completions.create(
                                 model="gpt-4",
                                 messages=[
                                     {"role": "system", "content": "Eres un médico neumólogo experto en análisis de imágenes de rayos X. "
@@ -184,22 +184,10 @@ with pestana1:
                             )
 
                         except Exception as e:
-                            st.session_state.gpt_response = f"❌ Error al generar diagnóstico: {str(e)}"
+                            st.session_state.gpt_response = f":x: Error al generar diagnóstico: {str(e)}"
+                            st.error(st.session_state.gpt_response)
 
-                if st.button(":hammer_and_wrench: Probar Conexión con OpenAI"):
-                    with st.spinner(":mag: Verificando conexión..."):
-                        try:
-                            response = openai.ChatCompletion.create(
-                                model="gpt-4",
-                                messages=[{"role": "user", "content": "Hola, ¿puedes responderme?"}],
-                                max_tokens=20,
-                                timeout=30
-                            )
-                            st.success(":white_check_mark: OpenAI está funcionando correctamente")
-                            st.write(":loudspeaker: Respuesta de OpenAI:")
-                            st.write(response["choices"][0]["message"]["content"])
-                        except Exception as e:
-                            st.error(f":x: Error al conectar con OpenAI: {e}")
+
 with pestana2:
     st.title("Detalles Técnicos del Modelo")
 
