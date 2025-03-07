@@ -8,6 +8,19 @@ import openai
 
 warnings.filterwarnings("ignore")
 
+api_key = st.secrets["OPENAI_API_KEY"] if "OPENAI_API_KEY" in st.secrets else None
+url = "https://api.openai.com/v1/models"
+headers = {"Authorization": f"Bearer {api_key}"}
+try:
+    response = requests.get(url, headers=headers, timeout=15)
+    if response.status_code == 200:
+        st.success(":white_check_mark: Conexión con OpenAI exitosa")
+        st.json(response.json())  # Muestra los modelos disponibles
+    else:
+        st.error(f":x: OpenAI respondió con error {response.status_code}: {response.text}")
+except requests.exceptions.RequestException as e:
+    st.error(f":x: No se pudo conectar a OpenAI: {e}")
+
 # Configuración de la clave API de OpenAI
 try:
     openai.api_key = st.secrets["OPENAI_API_KEY"]
