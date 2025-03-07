@@ -172,7 +172,7 @@ with pestana1:
                                 timeout=30
                             )
 
-                            st.session_state.gpt_response = response["choices"][0]["message"]["content"].strip()
+                            st.session_state.gpt_response = response.choices[0].message.content
                             # Aplicar justificación con HTML y CSS
                             st.markdown(
                                 f"""
