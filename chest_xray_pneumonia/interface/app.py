@@ -163,8 +163,9 @@ with pestana1:
                                     {"role": "user", "content": f"El sistema de IA ha detectado neumonía con una confianza del {confianza*100:.2f}%. "
                                                                 f"La severidad ha sido clasificada como {resultado['severity']}. "
                                                                 f"Se ha identificado afectación en las siguientes regiones pulmonares basadas en la imagen de Grad-CAM: "
-                                                                f"{diagnostico}. Basándote en esta información, proporciona un diagnóstico detallado de no más de 300 palabras"
-                                                                f"y una posible sugerencia médica. No menciones que eres una IA, supongamos que eres un médico."}
+                                                                f"{diagnostico}. Basándote en esta información, proporciona un diagnóstico de manera clara, concisa y profesional."
+                                                                f"y una posible sugerencia médica. No menciones que eres una IA, supongamos que eres un médico."
+                                                                 f"Máximo 150 palabras, No uses lenguaje técnico innecesario, Estructura la respuesta en oraciones completas."}
                                 ],
                                 max_tokens=350,
                                 temperature=0.7,
