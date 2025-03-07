@@ -181,7 +181,7 @@ with pestana1:
                                 </div>
                                 """,
                                 unsafe_allow_html=True
-        )
+                            )
 
                         except Exception as e:
                             st.session_state.gpt_response = f"❌ Error al generar diagnóstico: {str(e)}"
