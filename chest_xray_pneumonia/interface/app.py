@@ -167,7 +167,8 @@ with pestana1:
                                 ],
                                 max_tokens=350,
                                 temperature=0.7,
-                                top_p=1.0
+                                top_p=1.0,
+                                timeout=30
                             )
 
                             st.session_state.gpt_response = response["choices"][0]["message"]["content"].strip()
