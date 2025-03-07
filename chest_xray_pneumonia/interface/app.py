@@ -6,20 +6,14 @@ import base64
 import warnings
 import openai
 
-warnings.filterwarnings("ignore")
+st.set_page_config(
+    page_title="Analizador de Rayos X",
+    page_icon="🩺",
+    layout="centered",
+    initial_sidebar_state="auto"
+)
 
-api_key = st.secrets["OPENAI_API_KEY"] if "OPENAI_API_KEY" in st.secrets else None
-url = "https://api.openai.com/v1/models"
-headers = {"Authorization": f"Bearer {api_key}"}
-try:
-    response = requests.get(url, headers=headers, timeout=15)
-    if response.status_code == 200:
-        st.success(":white_check_mark: Conexión con OpenAI exitosa")
-        st.json(response.json())  # Muestra los modelos disponibles
-    else:
-        st.error(f":x: OpenAI respondió con error {response.status_code}: {response.text}")
-except requests.exceptions.RequestException as e:
-    st.error(f":x: No se pudo conectar a OpenAI: {e}")
+warnings.filterwarnings("ignore")
 
 # Configuración de la clave API de OpenAI
 try:
@@ -30,12 +24,6 @@ except KeyError:
 
 API_URL = "https://api-pneumonia-816459197660.us-central1.run.app/predict"
 
-st.set_page_config(
-    page_title="Analizador de Rayos X",
-    page_icon="🩺",
-    layout="centered",
-    initial_sidebar_state="auto"
-)
 
 # Inicializar estado de sesión para almacenar la imagen anterior y los resultados
 if "uploaded_image" not in st.session_state:
