@@ -186,7 +186,20 @@ with pestana1:
                         except Exception as e:
                             st.session_state.gpt_response = f"❌ Error al generar diagnóstico: {str(e)}"
 
-
+                if st.button(":hammer_and_wrench: Probar Conexión con OpenAI"):
+                    with st.spinner(":mag: Verificando conexión..."):
+                        try:
+                            response = openai.ChatCompletion.create(
+                                model="gpt-4",
+                                messages=[{"role": "user", "content": "Hola, ¿puedes responderme?"}],
+                                max_tokens=20,
+                                timeout=30
+                            )
+                            st.success(":white_check_mark: OpenAI está funcionando correctamente")
+                            st.write(":loudspeaker: Respuesta de OpenAI:")
+                            st.write(response["choices"][0]["message"]["content"])
+                        except Exception as e:
+                            st.error(f":x: Error al conectar con OpenAI: {e}")
 with pestana2:
     st.title("Detalles Técnicos del Modelo")
 
