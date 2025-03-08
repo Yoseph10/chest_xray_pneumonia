@@ -231,7 +231,7 @@ with pestana2:
     - **Callbacks:** `EarlyStopping`, `ReduceLROnPlateau`, `ModelCheckpoint`.
 
     ### 📈 Evaluación del Modelo
-    - **Precisión:** `93%`
+    - **Precisión:** `94%`
     - **Recall:** `91%`
     - **Métricas:** F1-score y AUC-ROC.
 
