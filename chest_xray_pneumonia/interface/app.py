@@ -183,6 +183,11 @@ with pestana2:
     - Agregar más datos para mejorar la generalización del modelo.
     - Refinamiento del análisis de severidad.
 
+    ### 👥 Autores
+    -- Yoseph Ayala
+    -- Esteban Amaya
+    -- William Caballero
+
     ---
     """, unsafe_allow_html=True)
 
