@@ -82,6 +82,15 @@ with st.sidebar:
             st.session_state.result = None  # Borrar resultado anterior
             st.session_state.gpt_response = None
 
+        # Mostrar integrantes del equipo debajo de la carga de imagen
+    st.markdown("""
+    ---
+    ### Integrantes del Equipo
+    - [Yoseph Ayala](https://github.com/Yoseph10)
+    - [William Caballero](https://github.com/willcc18)
+    - [Esteban Amaya](https://github.com/EEZEH01)
+    """, unsafe_allow_html=True)
+
 
 # Pestañas para Visualización y Detalles Técnicos
 pestana1, pestana2 = st.tabs(["Visor de Imágenes", "Detalles Técnicos"])
