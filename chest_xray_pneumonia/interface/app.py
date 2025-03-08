@@ -151,6 +151,11 @@ with pestana1:
                         gradcam_img = Image.open(io.BytesIO(gradcam_data))
                         st.image(gradcam_img, caption="Mapa de Calor Grad-CAM", use_container_width=True)
 
+                    # Guardamos una variable para incluirla en el prompt
+                    gradcam_info = "Se ha generado un mapa de calor (Grad-CAM) de la imagen de rayos X y se muestra en la interfaz."
+                else:
+                    gradcam_info = "No se proporcionó imagen de Grad-CAM."
+
                             # Botón para generar diagnóstico de IA
                 if st.button("🧠 Obtener diagnóstico de IA"):
                     with st.spinner("💬 Consultando IA..."):
@@ -162,7 +167,7 @@ with pestana1:
                                                                 "Tienes acceso a un sistema de IA que analiza imágenes y proporciona predicciones sobre enfermedades pulmonares."},
                                     {"role": "user", "content": f"El sistema de IA ha detectado neumonía con una confianza del {confianza*100:.2f}%. "
                                                                 f"La severidad ha sido clasificada como {resultado['severity']}. "
-                                                                f"Se ha identificado afectación en las siguientes regiones pulmonares basadas en la imagen de Grad-CAM: "
+                                                                f"{gradcam_info} "
                                                                 f"{diagnostico}. Basándote en esta información, proporciona un diagnóstico de manera clara, concisa y profesional."
                                                                 f"y una posible sugerencia médica. No menciones que eres una IA, supongamos que eres un médico."
                                                                  f"Máximo 150 palabras, No uses lenguaje técnico innecesario, Estructura la respuesta en oraciones completas."}
