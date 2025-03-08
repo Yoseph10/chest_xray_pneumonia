@@ -7,7 +7,7 @@ import warnings
 import openai
 
 st.set_page_config(
-    page_title="Analizador de Rayos X",
+    page_title="AI - PnuemoScan: Detector de Neumonía",
     page_icon="🩺",
     layout="centered",
     initial_sidebar_state="auto"
