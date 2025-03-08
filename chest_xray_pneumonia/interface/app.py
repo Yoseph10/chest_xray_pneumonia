@@ -143,7 +143,17 @@ with pestana1:
 
             if resultado["prediction"] == "pneumonia":
                 if "severity" in resultado:
-                    st.write(f"🔥 **Severidad de la neumonía:** {resultado['severity'].capitalize()}")
+
+                    if resultado["severity"] == "leve":
+                        icon = "🟢"
+                    elif resultado["severity"] == "moderada":
+                        icon = "🟡"
+                    elif resultado["severity"] == "severa":
+                        icon = "🔴"
+                    else:
+                        icon = "⚪"  # Default o desconocido
+
+                    st.write(f"🔥 **Severidad de la neumonía:** {resultado['severity']} {icon}")
 
                 if "gradcam" in resultado:
                     with st.expander("📷 Mostrar Grad-CAM"):
