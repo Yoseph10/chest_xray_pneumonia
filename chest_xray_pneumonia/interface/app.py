@@ -85,7 +85,7 @@ with st.sidebar:
         # Mostrar integrantes del equipo debajo de la carga de imagen
     st.markdown("""
     ---
-    ### Integrantes del Equipo
+    ### Integrantes del Equipo 🧑‍💻
     - [Yoseph Ayala](https://github.com/Yoseph10)
     - [William Caballero](https://github.com/willcc18)
     - [Esteban Amaya](https://github.com/EEZEH01)
