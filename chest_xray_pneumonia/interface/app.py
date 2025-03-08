@@ -231,8 +231,8 @@ with pestana2:
     - **Callbacks:** `EarlyStopping`, `ReduceLROnPlateau`, `ModelCheckpoint`.
 
     ### 📈 Evaluación del Modelo
-    - **Precisión:** `93%`
-    - **Recall:** `91%`
+    - **Precisión:** `94%`
+    - **Recall:** `92%`
     - **Métricas:** F1-score y AUC-ROC.
 
     ### 🔬 Explicabilidad con Grad-CAM
