@@ -61,7 +61,7 @@ def enviar_imagen_api(imagen: Image.Image):
         img_bytes.seek(0)
 
         files = {"file": ("imagen.png", img_bytes, "image/png")}
-        respuesta = requests.post(API_URL, files=files, timeout=10)
+        respuesta = requests.post(API_URL, files=files, timeout=30)
 
         respuesta.raise_for_status()
         return respuesta.json()
