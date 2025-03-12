@@ -96,7 +96,7 @@ with st.sidebar:
 pestana1, pestana2 = st.tabs(["Visor de Imágenes", "Detalles Técnicos"])
 
 with pestana1:
-    st.title("🩺 AI - PnuemoScan: Detector de Neumonía")
+    st.title("🩺 AI - PneumoScan: Detector de Neumonía")
 
     # Explicación del análisis preliminar
     st.markdown("""
